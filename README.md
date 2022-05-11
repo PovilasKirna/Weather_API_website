@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a a Next.JS project for simple API usage. You can search for weather conditions in a specific place, website shows a minimal clean weather display.
 
 ## Getting Started
 
