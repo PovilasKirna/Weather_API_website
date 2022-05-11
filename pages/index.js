@@ -9,7 +9,7 @@ import React, { useState, useEffect } from "react";
 import WeatherCard from "../components/WeatherCard";
 
 async function fetchWeather(city) {
-	const response = await fetch("http://localhost:3000/api/weather", {
+	const response = await fetch("weather-api-website.vercel.app/api/weather", {
 		method: "POST",
 		body: JSON.stringify({ city }),
 	});

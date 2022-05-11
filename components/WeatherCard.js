@@ -20,6 +20,7 @@ export default function WeatherCard({ imageCode, description, temp, city }) {
 					width="100%"
 					height="100%"
 					src={`/images/weather_icons/${imageCode}.svg`}
+					alt={description + " weather icon"}
 				/>
 				<CardContent>
 					<Typography gutterBottom variant="h5" component="div">
