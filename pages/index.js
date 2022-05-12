@@ -9,14 +9,26 @@ import React, { useState, useEffect } from "react";
 import WeatherCard from "../components/WeatherCard";
 
 async function fetchWeather(city) {
-	const response = await fetch(
-		"https://weather-api-website.vercel.app/api/weather",
-		{
-			method: "POST",
-			body: JSON.stringify({ city }),
+	try {
+		const response = await fetch(
+			"https://weather-api-website.vercel.app/api/weather",
+			{
+				method: "POST",
+				body: JSON.stringify({ city }),
+			}
+		);
+		return await response.json();
+	} catch (FetchError) {
+		try {
+			const response = await fetch("http://localhost:3000/api/weather", {
+				method: "POST",
+				body: JSON.stringify({ city }),
+			});
+			return await response.json();
+		} catch (FetchError) {
+			console.log(FetchError);
 		}
-	);
-	return await response.json();
+	}
 }
 
 const Home = ({ kaunas, gronau, austin }) => {
@@ -100,31 +112,33 @@ const Home = ({ kaunas, gronau, austin }) => {
 							<SearchIcon />
 						</IconButton>
 					</Paper>
-					<motion.div
-						initial={{ opacity: 0, x: -1000 }}
-						animate={{ opacity: 1, x: 0 }}
-						transition={{ delay: 0.6, duration: 1, type: "spring" }}
-						style={{ marginTop: 10, display: "flex", flexDirection: "row" }}
-					>
-						<WeatherCard
-							imageCode={kaunas.weather[0].icon}
-							city={kaunas.name}
-							temp={kaunas.main.temp}
-							description={kaunas.weather[0].description}
-						/>
-						<WeatherCard
-							imageCode={gronau.weather[0].icon}
-							city={gronau.name}
-							temp={gronau.main.temp}
-							description={gronau.weather[0].description}
-						/>
-						<WeatherCard
-							imageCode={austin.weather[0].icon}
-							city={austin.name}
-							temp={austin.main.temp}
-							description={austin.weather[0].description}
-						/>
-					</motion.div>
+					{kaunas && gronau && austin && (
+						<motion.div
+							initial={{ opacity: 0, x: -1000 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ delay: 0.6, duration: 1, type: "spring" }}
+							style={{ marginTop: 10, display: "flex", flexDirection: "row" }}
+						>
+							<WeatherCard
+								imageCode={kaunas.weather[0].icon}
+								city={kaunas.name}
+								temp={kaunas.main.temp}
+								description={kaunas.weather[0].description}
+							/>
+							<WeatherCard
+								imageCode={gronau.weather[0].icon}
+								city={gronau.name}
+								temp={gronau.main.temp}
+								description={gronau.weather[0].description}
+							/>
+							<WeatherCard
+								imageCode={austin.weather[0].icon}
+								city={austin.name}
+								temp={austin.main.temp}
+								description={austin.weather[0].description}
+							/>
+						</motion.div>
+					)}
 				</Box>
 			</motion.div>
 		</Container>
