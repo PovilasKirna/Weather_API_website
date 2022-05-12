@@ -2,9 +2,8 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
-import { IconButton } from "@mui/material";
-import { Paper } from "@mui/material";
-import { motion } from "framer-motion";
+import { Paper, Modal, IconButton } from "@mui/material";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import WeatherCard from "../components/WeatherCard";
 
@@ -33,6 +32,7 @@ async function fetchWeather(city) {
 
 const Home = ({ kaunas, gronau, austin }) => {
 	const [currentWeather, setCurrentWeather] = useState({});
+	const [showWeather, setShowWeather] = useState(true);
 
 	function handleKeyPress(event) {
 		if (event.key === "Enter") {
@@ -41,7 +41,7 @@ const Home = ({ kaunas, gronau, austin }) => {
 		}
 	}
 
-	function validateSearch() {
+	async function validateSearch() {
 		var search = document.getElementById("search").value;
 		var regex = /^[a-zA-Z ]+$/;
 		//validate search for only letters and spaces
@@ -52,8 +52,11 @@ const Home = ({ kaunas, gronau, austin }) => {
 			alert("Please enter only letters and spaces");
 			return;
 		}
-		setCurrentWeather(fetchWeather(search));
-		//		console.log(currentWeather);
+
+		await fetchWeather(search).then((data) => {
+			setCurrentWeather(data);
+			setShowWeather(false);
+		});
 	}
 
 	return (
@@ -112,32 +115,57 @@ const Home = ({ kaunas, gronau, austin }) => {
 							<SearchIcon />
 						</IconButton>
 					</Paper>
-					{kaunas && gronau && austin && (
-						<motion.div
-							initial={{ opacity: 0, x: -1000 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: 0.6, duration: 1, type: "spring" }}
-							style={{ marginTop: 10, display: "flex", flexDirection: "row" }}
-						>
-							<WeatherCard
-								imageCode={kaunas.weather[0].icon}
-								city={kaunas.name}
-								temp={kaunas.main.temp}
-								description={kaunas.weather[0].description}
-							/>
-							<WeatherCard
-								imageCode={gronau.weather[0].icon}
-								city={gronau.name}
-								temp={gronau.main.temp}
-								description={gronau.weather[0].description}
-							/>
-							<WeatherCard
-								imageCode={austin.weather[0].icon}
-								city={austin.name}
-								temp={austin.main.temp}
-								description={austin.weather[0].description}
-							/>
-						</motion.div>
+					{kaunas && ( //&& gronau && austin &&
+						<AnimatePresence exitBeforeEnter>
+							{showWeather && (
+								<motion.div
+									initial={{ opacity: 0, x: -1000 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: 0.6, duration: 1, type: "spring" }}
+									exit={{ opacity: 0, x: 1000 }}
+									style={{
+										marginTop: 10,
+										display: "flex",
+										flexDirection: "row",
+									}}
+									key="initialWeather"
+								>
+									<WeatherCard
+										imageCode={kaunas.weather[0].icon}
+										city={kaunas.name}
+										temp={kaunas.main.temp}
+										description={kaunas.weather[0].description}
+									/>
+									<WeatherCard
+										imageCode={gronau.weather[0].icon}
+										city={gronau.name}
+										temp={gronau.main.temp}
+										description={gronau.weather[0].description}
+									/>
+									<WeatherCard
+										imageCode={austin.weather[0].icon}
+										city={austin.name}
+										temp={austin.main.temp}
+										description={austin.weather[0].description}
+									/>
+								</motion.div>
+							)}
+							{!showWeather && (
+								<motion.div
+									initial={{ opacity: 0, x: -1000 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ duration: 1, type: "spring" }}
+									key="searchWeathe"
+								>
+									<WeatherCard
+										imageCode={currentWeather.weather[0].icon}
+										city={currentWeather.name}
+										temp={currentWeather.main.temp}
+										description={currentWeather.weather[0].description}
+									/>
+								</motion.div>
+							)}
+						</AnimatePresence>
 					)}
 				</Box>
 			</motion.div>
